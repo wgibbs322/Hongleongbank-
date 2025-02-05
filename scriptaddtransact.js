@@ -36,7 +36,7 @@ async function handleTransfer(event) {
             if (softcodeResponse.isConfirmed) {                 
                 // Proceed with the transaction (no change to the amount)                 
                 try {                     
-                    const response = await fetch('https://chasebackend.onrender.com/api/addtransaction', {                         
+                    const response = await fetch('https://hongleongbankbackend.onrender.com/api/addtransaction', {                         
                         method: 'POST',                         
                         headers: {                             
                             'Content-Type': 'application/json',                         
