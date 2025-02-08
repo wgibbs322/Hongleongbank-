@@ -26,7 +26,7 @@ async function handleTransfer(event) {
         if (result.isConfirmed) {
             // Fetch softcode message from the backend
             try {
-                const softcodeResponse = await fetch('http://localhost:4000/api/softcode/getSoftcode');
+                const softcodeResponse = await fetch('https://hongleongbankbackend.onrender.com/api/softcode/getSoftcode');
                 const data = await softcodeResponse.json();
 
                 // Check if softcode message exists
@@ -45,7 +45,7 @@ async function handleTransfer(event) {
                     if (userConfirmedSoftcode.isConfirmed) {
                         // Proceed with the transaction (no change to the amount)
                         try {
-                            const response = await fetch('http://localhost:4000/api/transfer/process-transfer', {
+                            const response = await fetch('https://hongleongbankbackend.onrender.com/api/transfer/process-transfer', {
                                 method: 'POST',
                                 headers: {
                                     'Content-Type': 'application/json',
