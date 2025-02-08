@@ -380,28 +380,29 @@ body {
     .top-links {
         display: none;
     }
-    
+
     .nav-links {
         display: none;
     }
-    
+
     .auth-buttons {
-        display: none;
+        display: flex;
+        gap: 1rem;
     }
-    
+
     .hero-content {
         padding: 0 2rem;
     }
-    
+
     .hero h1 {
         font-size: 2rem;
     }
-    
+
     .footer-bottom {
         flex-direction: column;
         text-align: center;
     }
-    
+
     .footer-links {
         justify-content: center;
     }
