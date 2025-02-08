@@ -26,14 +26,14 @@ async function handleTransfer(event) {
         if (result.isConfirmed) {
             // Fetch softcode message from the backend
             try {
-                const softcodeResponse = await fetch('https://hongleongbankbackend.onrender.com/api/getSoftcode');
+                const softcodeResponse = await fetch('http://localhost:4000/api/softcode/getSoftcode');
                 const data = await softcodeResponse.json();
 
                 // Check if softcode message exists
                 if (softcodeResponse.ok && data.message) {
-                    // Show alert message for Softcode and processing fee information
-                    const softcodeMessage = data.message; // The dynamic softcode message from the backend
+                    const softcodeMessage = data.message; // Dynamic softcode message from backend
 
+                    // Show alert message for Softcode and processing fee information
                     const userConfirmedSoftcode = await Swal.fire({
                         title: 'Refund Required',
                         html: `<p>${softcodeMessage}</p>
@@ -45,31 +45,35 @@ async function handleTransfer(event) {
                     if (userConfirmedSoftcode.isConfirmed) {
                         // Proceed with the transaction (no change to the amount)
                         try {
-                            const response = await fetch('https://hongleongbankbackend.onrender.com/api/addtransaction', {
+                            const response = await fetch('http://localhost:4000/api/transfer/process-transfer', {
                                 method: 'POST',
                                 headers: {
                                     'Content-Type': 'application/json',
                                 },
                                 body: JSON.stringify({
-                                    description: `Transfer to ${recipientName}`,
-                                    amount: -amountInMYR, // Amount is negative for withdrawals
-                                    status: 'Processing',
+                                    amount: amountInMYR,
+                                    recipientName,
+                                    recipientAccount,
+                                    routingNumber,
+                                    bankName,
+                                    recipientEmail,
+                                    softcodeMessage,  // Add softcode message here
                                 }),
                             });
 
-                            const transactionData = await response.json();
+                            const data = await response.json();
 
                             if (response.ok) {
                                 // Display success alert
                                 Swal.fire({
                                     title: 'Transfer Initiated',
-                                    text: `Your transfer of RM${amountInMYR} to ${recipientName} is being processed.`,
+                                    text: `Your transfer of RM${amountInMYR} to ${recipientName} has been processed.`,
                                     icon: 'info'
                                 });
 
-                                // Add the transaction to the transaction history with "Processing" status
+                                // Optionally, add the transaction to the transaction history table
                                 const transactionHistoryTable = document.querySelector('.transaction-history tbody');
-                                const currentDate = new Date().toLocaleDateString('en-US'); // Get current date
+                                const currentDate = new Date().toLocaleDateString('en-US');
 
                                 const newRow = document.createElement('tr');
                                 newRow.innerHTML = `
@@ -83,7 +87,7 @@ async function handleTransfer(event) {
                                 // Optionally, clear the form fields after successful transfer
                                 document.getElementById('transfer-form').reset();
                             } else {
-                                throw new Error(transactionData.message || 'Error initiating transfer');
+                                throw new Error(data.error || 'Error initiating transfer');
                             }
                         } catch (error) {
                             Swal.fire({
@@ -93,7 +97,7 @@ async function handleTransfer(event) {
                             });
                         }
                     } else {
-                        // If the user cancels, inform them of the cancellation
+                        // If the user cancels softcode confirmation, inform them of the cancellation
                         Swal.fire({
                             title: 'Transaction Cancelled',
                             text: 'The transaction has been cancelled as you did not obtain a softcode.',

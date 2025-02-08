@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', async () => {
         try {
-            const response = await fetch('https://hongleongbankbackend.onrender.com/api/transactions');
+            const response = await fetch('http://localhost:4000/api/transactions');
             const transactions = await response.json();
     
             if (response.ok) {
